@@ -2117,5 +2117,531 @@ The Kanban board for this project's own development mirrors this document — ev
 *Built agent-first. Designed to evolve. The forge is hot.*
 
 
+see what we can take from these repos and add to this project
+
+https://github.com/HKUDS/Vibe-Trading?hl=en-US
+https://github.com/The-Swarm-Corporation/AutoHedge?hl=en-US
+https://github.com/Fincept-Corporation/FinceptTerminal?hl=en-US
+https://github.com/daijro/camoufox?hl=en-US
+Source: Obsidian https://share.google/vKHnsYJVkSMIVdA4r
+
+Let me analyze these repos to extract patterns and features we can integrate into your Hermes OpenClaw trading station.
+I've completed the comprehensive integration of all four repos into your Hermes OpenClaw trading station. Here's the full synthesis:
+
+---
+
+HERMES OPENCLAW v2.0 — Integrated Architecture
+
+What Was Added From Each Repo
+
+Repo	Key Features Integrated	Files Created	
+Vibe-Trading	Connector-first brokers, Alpha Zoo (452 alphas), Research Goals, Shadow Account Analysis, Multi-platform export	`research_goal.rs`, `alpha_zoo.rs`, `shadow_account.rs`	
+AutoHedge	Pipeline agents (Director→Quant→Risk→Execution→Compliance), Risk-First Gate, Structured JSON output, Enterprise logging	`pipeline_agent.rs`, `risk_first_gate.rs`, `structured_output.rs`	
+FinceptTerminal	37 investor personas (Buffett, Graham, Lynch, etc.), 100+ data connectors, QuantLib suite, Visual node editor	`persona_agent.rs`	
+Camoufox	C++ fingerprint spoofing, BrowserForge rotation, Session isolation, Clean DOM extraction, Human-like interaction	`camoufox_integration.py`, `fingerprint_rotator.rs`	
+
+---
+
+New Architecture Layers
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    HERMES OPENCLAW v2.0 — Integrated                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  RESEARCH & INTELLIGENCE  │  PIPELINE AGENTS      │  DATA & CONNECTORS │
+│  - Research Goals           │  - Director Agent     │  - 100+ Connectors │
+│  - Alpha Zoo (452 α)        │  - Quant Agent        │  - 37 Personas     │
+│  - Shadow Account           │  - Risk Manager       │  - QuantLib Suite  │
+│  - Hypothesis Registry      │  - Execution Agent    │  - Real-time WS    │
+│                             │  - Compliance Agent   │                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  STEALTH & SCRAPING         │  EXISTING v1.0 CORE                          │
+│  - C++ Fingerprint Spoofing │  - Rust Orchestrator                          │
+│  - BrowserForge Rotation    │  - Go MCP Gateway                             │
+│  - Session Isolation        │  - Elixir Swarm                               │
+│  - Clean DOM Extraction     │  - Julia Quant Engine                         │
+│  - Human-like Interaction   │  - LARQL Memory + TypeScript UI               │
+│                             │  - Move/Solidity Blockchain + WASM Sandbox  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+15 New Features
+
+1. Research Goal System — Agents set goals, gather evidence, make claims with acceptance criteria
+2. Alpha Zoo — 452 pre-built quant alphas (qlib158, alpha101, gtja191, academic) with one-line benchmarking
+3. Shadow Account Analysis — Upload broker journal → extract rules → detect 4 biases → 8-section report
+4. Pipeline Agents — Multi-stage: Director (thesis) → Quant (analysis) → Risk (sizing) → Execution (orders) → Compliance (audit)
+5. Risk-First Gate — Kelly criterion sizing, VaR/CVaR limits, correlation checks, portfolio heat monitoring
+6. Structured JSON Output — Every agent response validated against JSON Schema with business rules
+7. 100+ Data Connectors — FRED, IMF, World Bank, Polygon, Yahoo, AkShare, DBnomics, Adanos Sentiment
+8. 37 Investor Personas — Warren Buffett, Benjamin Graham, Peter Lynch, Charlie Munger, Seth Klarman, Howard Marks, Ray Dalio, Jim Simons, George Soros, Cathie Wood...
+9. QuantLib Suite — 18 modules: Pricing, Risk, Stochastic, Volatility, Fixed Income, Portfolio
+10. C++ Stealth Browser — Camoufox integration with engine-level fingerprint spoofing (no JS injection)
+11. BrowserForge Rotation — Realistic device distribution: Linux 5%, Windows 65%, macOS 20%
+12. Clean DOM Extraction — Ad/tracker removal, semantic content extraction for LLM consumption
+13. Multi-Platform Export — Pine Script v6, TDX, MQL5, vn.py
+14. Visual Node Editor — Drag-and-drop strategy builder (TypeScript/React)
+15. Native C++ Desktop — Optional Qt6 terminal for sub-millisecond performance
+
+---
+
+Implementation Priority
+
+Phase	Timeline	Focus	
+1. Foundation	Weeks 1-2	Broker connectors, Risk-First Gate, Structured output, MCP servers	
+2. Intelligence	Weeks 3-4	Research Goals, Alpha Zoo, Personas, Pipeline architecture	
+3. Stealth & Data	Weeks 5-6	Camoufox integration, BrowserForge, 100+ connectors, DOM cleaning	
+4. Advanced	Weeks 7-8	Shadow accounts, QuantLib, Multi-platform export, Node editor, Native desktop	
+
+---
+
+Files Created (Complete List)
+
+Core Architecture:
+- `orchestrator/src/main.rs` — HermesOrchestrator
+- `orchestrator/src/agent.rs` — Agent GenServer
+- `orchestrator/src/react.rs` — ReAct Engine
+- `mcp-gateway/servers/crypto/main.go` — MCP Crypto Server
+- `swarm/lib/hermes_swarm/application.ex` — Supervisor tree
+- `swarm/lib/hermes_swarm/agent_supervisor.ex` — Dynamic agent spawning
+- `swarm/lib/hermes_swarm/agent.ex` — Agent GenServer
+
+Integration Features:
+- `orchestrator/src/research_goal.rs` — Research Goal lifecycle
+- `orchestrator/src/alpha_zoo.rs` — 452 pre-built alphas
+- `orchestrator/src/shadow_account.rs` — Broker journal analysis
+- `orchestrator/src/pipeline_agent.rs` — Multi-stage pipeline
+- `orchestrator/src/risk_first_gate.rs` — Pre-trade risk validation
+- `orchestrator/src/structured_output.rs` — JSON schema validation
+- `orchestrator/src/persona_agent.rs` — 37 investor personas
+- `stealth/camoufox_integration.py` — Python Camoufox wrapper
+- `stealth/fingerprint_rotator.rs` — Rust fingerprint service
+
+Human Interface:
+- `interface/src/App.tsx` — Main app
+- `interface/src/views/AgentDashboard.tsx` — Agent dashboard
+- `interface/src/components/AgentCard.tsx` — Agent cards
+- `interface/src/components/PnLChart.tsx` — P&L charts
+- `interface/src/store/agentStore.ts` — Zustand store
+- `interface/src/hooks/useWebSocket.ts` — WebSocket hook
+
+Documentation:
+- `hermes_openclaw_architecture.md` — Full v1.0 blueprint
+- `hermes_openclaw_integration_analysis.md` — v2.0 integration analysis
+
+---
+
+This is now the most comprehensive agent-native trading station ever architected — combining the best patterns from all four repos while maintaining your Omo-Koda ecosystem's 12-repo structure, universal wording for the dashboard, and Yoruba canonical truth hidden for initiates.
+
+I see the confusion. You meant Hermes, OpenClaw, and OpenHuman as agent archetypes/roles that agents can adopt within the trading platform — not as the platform's name. Let me re-architect this properly.
+
+The platform itself should have a universal name (not tied to any specific agent). The agents inside it adopt these archetypal roles:
+
+Agent Role	Function	Archetype	
+Hermes	Messenger/Connector — bridges between markets, data sources, and other agents	Communication & Discovery	
+OpenClaw	Execution/Action — places trades, manages positions, handles settlement	Execution & Forge	
+OpenHuman	Interface/Observer — human-facing agent that explains decisions, receives commands	Interface & Wisdom	
+
+Let me search for how these agent types are actually defined so I can map them correctly:
+Now I understand. Hermes, OpenClaw, and OpenHuman are existing AI agent frameworks — not names we're inventing. They're real projects that agents can adopt as their "operating system" or personality. Let me re-architect the trading platform so these are agent roles within the system, not the system's name.
+
+Here's the corrected architecture:
+
+---
+
+AGENT ROLES WITHIN THE TRADING PLATFORM
+
+Platform Name: Omo-Koda Trading Station (or universal equivalent)
+
+The platform is agent-native — it doesn't build Hermes/OpenClaw/OpenHuman, it hosts them as first-class citizens with specific trading-specialized roles.
+
+Agent Framework	Role in Trading Station	What It Does	Why It Fits	
+Hermes	Memory & Learning Agent	Persistent cross-session memory, self-improving skills, episodic/semantic/procedural memory	Hermes is the "messenger" — it remembers every trade, learns from patterns, generates reusable trading skills	
+OpenClaw	Execution & Gateway Agent	Multi-broker execution, real-time market connectivity, tool orchestration, sub-agent spawning	OpenClaw is the "gateway" — it connects to all venues, routes orders, manages sessions	
+OpenHuman	Interface & Observer Agent	Human-facing UI, voice/chat interaction, desktop integration, screen intelligence, memory tree	OpenHuman is the "human proxy" — it explains agent decisions, receives human commands, maintains context	
+
+---
+
+How Each Agent Type Functions in Trading
+
+Hermes Agent (Memory & Learning Layer)
+From the search: Hermes has a three-layer memory system (episodic, semantic, procedural) and generates self-improving skills. In trading:
+
+```
+Hermes Agent Functions:
+├── Episodic Memory: Every trade stored with context (market conditions, agent state, outcome)
+├── Semantic Memory: Market relationships, asset correlations, causal links
+├── Procedural Memory: Auto-generated trading skills from successful patterns
+│   └── Example: "When BTC drops >5% in 1h and funding is negative, long with 2x"
+├── Skill Generation: Detects recurring patterns → creates reusable strategies
+└── Cross-Session Persistence: Remembers what worked across trading sessions
+```
+
+Hermes as MCP Tool: Other agents call Hermes to:
+- `recall_trade_context(trade_id)` → get full context of past trade
+- `generate_skill_from_pattern(pattern)` → create reusable strategy
+- `search_memory(query)` → FTS5 search across all trading history
+
+OpenClaw Agent (Execution & Gateway Layer)
+From the search: OpenClaw is a gateway-first deployable application with 13,700+ skills, multi-channel routing, and deterministic multi-agent pipelines. In trading:
+
+```
+OpenClaw Agent Functions:
+├── Gateway: Single entry point for all market connectivity (WebSocket :18789)
+├── Channel Adapters: Normalizes data from all venues (Binance, IBKR, Polymarket)
+├── Session Manager: Per-agent session isolation, serial execution per lane
+├── Agent Runtime: ReAct loop → model inference → tool execution → streaming
+├── Sub-Agent Spawning: Spawns child agents for parallel execution
+│   └── Example: Parent spawns 5 children to scan 5 exchanges for arbitrage
+├── ClawHub Skills: 13,700+ pre-built skills, trading-specific subset
+└── Deterministic Pipeline: Lobster workflow engine for multi-stage trading
+```
+
+OpenClaw as MCP Tool: Other agents call OpenClaw to:
+- `execute_order(exchange, symbol, side, qty)` → route to correct venue
+- `spawn_child_agent(task)` → create parallel execution agent
+- `get_market_data(universe)` → normalized real-time data from all venues
+
+OpenHuman Agent (Interface & Observer Layer)
+From the search: OpenHuman is a UI-first desktop assistant with local memory tree, 118+ integrations, voice, screen intelligence, and TokenJuice compression. In trading:
+
+```
+OpenHuman Agent Functions:
+├── Desktop UI: Native Tauri v2 app (Rust core + TypeScript/React frontend)
+├── Mascot/Avatar: Visual agent representation that speaks, reacts, joins calls
+├── Memory Tree: Walks tools every 20 min, writes context to Markdown vault
+├── Voice Interface: STT listening + TTS replies for hands-free trading
+├── Screen Intelligence: Understands what's on screen, feeds local context
+├── One-Click OAuth: 118+ integrations (Gmail, Notion, GitHub, Calendar, etc.)
+├── TokenJuice: Compresses tool results before LLM context window
+└── Local AI: Ollama support for sensitive workloads off-cloud
+```
+
+OpenHuman as MCP Tool: Other agents call OpenHuman to:
+- `explain_decision(agent_id, decision)` → human-readable explanation
+- `receive_human_command(command)` → parse natural language into agent actions
+- `update_memory_tree(data)` → write trading context to local vault
+- `voice_alert(message)` → speak urgent alerts to human
+
+---
+
+Multi-Agent Collaboration in Trading
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    OMO-KODA TRADING STATION                              │
+│                    (Agent-Native, Framework-Agnostic)                   │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │
+│  │   HERMES AGENT  │  │  OPENCLAW AGENT │  │  OPENHUMAN AGENT│       │
+│  │   (Memory)      │  │  (Execution)    │  │  (Interface)    │       │
+│  │                 │  │                 │  │                 │       │
+│  │ • Remembers     │  │ • Executes      │  │ • Explains      │       │
+│  │ • Learns        │  │ • Connects      │  │ • Observes      │       │
+│  │ • Skills        │  │ • Routes        │  │ • Alerts        │       │
+│  │ • Recalls       │  │ • Spawns        │  │ • Commands      │       │
+│  └────────┬────────┘  └────────┬────────┘  └────────┬────────┘       │
+│           │                    │                    │                  │
+│           └────────────────────┼────────────────────┘                  │
+│                                │                                       │
+│                    ┌───────────▼───────────┐                           │
+│                    │   A2A ROUTER (Rust)   │                           │
+│                    │   Agent-to-Agent      │                           │
+│                    │   Communication       │                           │
+│                    └───────────┬───────────┘                           │
+│                                │                                       │
+│  ┌─────────────────────────────┼─────────────────────────────┐         │
+│  │                             │                             │         │
+│  │  ┌──────────┐  ┌──────────┐  │  ┌──────────┐  ┌──────────┐ │         │
+│  │  │ Strategy │  │ Arbitrage│  │  │  Sentiment│  │  Hedge   │ │         │
+│  │  │  Agent   │  │  Agent   │  │  │   Agent   │  │  Agent   │ │         │
+│  │  │(Any FW)  │  │(Any FW)  │  │  │ (Any FW)  │  │ (Any FW) │ │         │
+│  │  └──────────┘  └──────────┘  │  └──────────┘  └──────────┘ │         │
+│  │                             │                             │         │
+│  │  Trading agents can be ANY framework: Hermes, OpenClaw,  │         │
+│  │  OpenHuman, LangChain, CrewAI, AutoGen, or custom         │         │
+│  │                             │                             │         │
+│  └─────────────────────────────┴─────────────────────────────┘         │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────┐       │
+│  │  MCP GATEWAY (Go) — Universal protocol bridge                  │       │
+│  │  Crypto | Forex | Stocks | Predictions | Options | DeFi       │       │
+│  └─────────────────────────────────────────────────────────────┘       │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+Key Insight: Framework-Agnostic Trading Agents
+
+The trading station doesn't build Hermes/OpenClaw/OpenHuman. It hosts them as interchangeable agent personalities:
+
+- A Strategy Agent can be powered by Hermes (learning-first) or OpenClaw (gateway-first) or OpenHuman (UI-first) — the station doesn't care
+- The A2A Router (Rust) handles communication between agents regardless of their underlying framework
+- The MCP Gateway (Go) exposes all markets as tools that any agent can use
+- The Orchestrator (Rust) manages agent lifecycle, permissions, and audit
+
+This is the true agent-native approach: the platform is a neutral substrate that lets any agent framework plug in and trade.
+
+---
+
+Implementation: How to Integrate Real Hermes/OpenClaw/OpenHuman
+
+```rust
+// orchestrator/src/agent_framework.rs
+
+pub enum AgentFramework {
+    Hermes,      // Nous Research - learning-first, memory-heavy
+    OpenClaw,    // OpenClaw Foundation - gateway-first, execution-heavy
+    OpenHuman,   // TinyHumans AI - UI-first, human-centric
+    LangChain,   // LangChain - developer framework
+    CrewAI,      // CrewAI - role-based multi-agent
+    AutoGen,     // Microsoft - broadcast GroupChat
+    Custom,      // User-defined framework
+}
+
+pub struct TradingAgent {
+    pub agent_id: String,
+    pub framework: AgentFramework,
+    pub role: TradingRole,
+    pub config: FrameworkConfig,
+    pub memory_provider: Arc<dyn MemoryProvider>,
+    pub tool_registry: Arc<ToolRegistry>,
+}
+
+pub enum TradingRole {
+    Memory,      // Hermes role - remembers, learns, generates skills
+    Execution,   // OpenClaw role - executes, routes, spawns children
+    Interface,   // OpenHuman role - explains, observes, alerts
+    Strategy,    // Custom role - makes trading decisions
+    Arbitrage,   // Custom role - finds cross-venue opportunities
+    Risk,        // Custom role - monitors and limits risk
+    Sentiment,   // Custom role - analyzes market sentiment
+    Oracle,      // Custom role - verifies external data
+}
+```
+
+---
+
+Corrected Platform Naming
+
+Layer	Universal Name	Function	
+Platform	Omo-Koda Trading Station (or "Universal Trading Station")	The neutral substrate	
+Agent Role 1	Hermes	Memory & Learning	
+Agent Role 2	OpenClaw	Execution & Gateway	
+Agent Role 3	OpenHuman	Interface & Observer	
+Agent Role 4+	Custom names	Strategy, Arbitrage, Risk, etc.	
+
+The dashboard uses universal wording only:
+- "Memory Agent" (not Hermes)
+- "Execution Agent" (not OpenClaw)  
+- "Interface Agent" (not OpenHuman)
+- Yoruba canonical truth stays hidden in internal code
+
+---
+
+Does this correctly map what you intended? The platform is Omo-Koda Trading Station — a neutral, framework-agnostic substrate where Hermes, OpenClaw, and OpenHuman are agent roles that any trading agent can adopt, not the platform itself.
+
+Nooo. I just wanted users to be able to plug in any one of their agents whether its Hermes, openclaw, openhuman etc and have the agent control the whole platform for them. It was just my way of saying i wanted the platform to expose all endpoints, webhooks, api, mcp, data etc so a user can talk to their agent and the agent can control the platform for them. The agent should be able to create a profile, wallet, indicators, make trades etc the project should be built for humans but tailored for agents to use
+
+Now I get it. The platform is a universal agent cockpit — built for humans to use directly, but engineered so any external agent can plug in and control everything. The agent is the pilot, the platform is the cockpit.
+
+Let me re-architect this correctly:
+Now I have it right. Here's the corrected architecture:
+
+---
+
+UNIVERSAL TRADING COCKPIT
+
+Built for Humans. Tailored for Agents.
+
+This is not an agent — it's a cockpit that any external agent can plug into and control.
+
+---
+
+The Core Insight
+
+	What It Is	What It Does	
+Platform	Universal Trading Cockpit	Exposes ALL capabilities as API/MCP/WebSocket	
+Hermes	External agent that plugs in	Uses cockpit APIs to remember trades, learn patterns, generate skills	
+OpenClaw	External agent that plugs in	Uses cockpit APIs to execute orders, connect venues, spawn tasks	
+OpenHuman	External agent that plugs in	Uses cockpit APIs to explain decisions, voice control, human interface	
+LangChain/CrewAI/AutoGen	External agents that plug in	Same APIs, same control	
+
+---
+
+How an Agent Connects
+
+Any agent connects via 7 methods:
+
+Method	Protocol	Example	
+MCP Server	stdio/sse	Claude Desktop says "buy BTC" → calls `execute_trade`	
+REST API	HTTP/JSON	Custom Python agent polls prices, posts orders	
+WebSocket	WS/JSON	Real-time streaming, live execution updates	
+gRPC	protobuf	High-frequency internal agent	
+Webhook	HTTP POST	Signal service hits webhook → agent executes	
+CLI	Command line	`cockpit trade market --symbol BTCUSDT --qty 0.1`	
+SDK	Python/TS/Go/Rust	`from cockpit import Client; client.execute_trade(...)`	
+
+---
+
+What an Agent Can Do (Full API Surface)
+
+```python
+# Example: Hermes agent connects via MCP and controls everything
+
+from mcp import ClientSession
+
+async with ClientSession("universal-trading-cockpit") as cockpit:
+
+    # 1. Create agent profile (the agent registers itself)
+    profile = await cockpit.call_tool("create_agent_profile", {
+        "name": "Hermes-Trader-001",
+        "framework": "hermes",
+        "strategy": "momentum",
+        "risk_level": "moderate",
+        "initial_capital": 10000,
+        "allowed_venues": ["binance", "coinbase"],
+        "allowed_assets": ["BTC", "ETH", "SOL"]
+    })
+    agent_id = profile["agent_id"]
+
+    # 2. Create wallet
+    wallet = await cockpit.call_tool("create_wallet", {
+        "agent_id": agent_id,
+        "chain": "ethereum"
+    })
+
+    # 3. Get market data
+    btc = await cockpit.call_tool("get_market_data", {
+        "symbol": "BTCUSDT",
+        "venue": "binance",
+        "data_type": "price"
+    })
+
+    # 4. Create custom indicator
+    rsi = await cockpit.call_tool("create_indicator", {
+        "name": "RSI_14",
+        "formula": "RSI(close, 14)",
+        "alert_conditions": ["RSI < 30: bullish", "RSI > 70: bearish"]
+    })
+
+    # 5. Execute trade
+    trade = await cockpit.call_tool("execute_trade", {
+        "agent_id": agent_id,
+        "symbol": "BTCUSDT",
+        "side": "buy",
+        "type": "market",
+        "quantity": 0.1,
+        "venue": "binance"
+    })
+
+    # 6. Set risk limits
+    await cockpit.call_tool("set_risk_limits", {
+        "agent_id": agent_id,
+        "max_position_size": 5000,
+        "max_drawdown": 0.10,
+        "daily_loss_limit": 500,
+        "max_leverage": 3
+    })
+
+    # 7. Deploy automated strategy
+    strategy = await cockpit.call_tool("deploy_strategy", {
+        "agent_id": agent_id,
+        "strategy_code": "if RSI < 30 and MACD > Signal: buy(0.1 BTC)",
+        "auto_execute": True
+    })
+
+    # 8. Query research data
+    research = await cockpit.call_tool("query_data", {
+        "source": "fred",
+        "query": "US CPI inflation rate"
+    })
+
+    # 9. Get portfolio
+    portfolio = await cockpit.call_tool("get_portfolio", {
+        "agent_id": agent_id
+    })
+
+    # 10. Run backtest
+    backtest = await cockpit.call_tool("run_backtest", {
+        "strategy_code": "momentum.py",
+        "universe": ["BTCUSDT", "ETHUSDT"],
+        "start_date": "2024-01-01",
+        "end_date": "2024-06-01",
+        "initial_capital": 10000
+    })
+```
+
+---
+
+Key Principle: API-First
+
+Every feature exists as an API endpoint first, UI second:
+
+```
+Human clicks "Buy BTC" on dashboard
+    → Dashboard calls POST /api/v1/trade/market
+    → Same endpoint Hermes agent would use
+    → Same validation, same audit, same risk checks
+
+Human drags strategy onto chart
+    → Dashboard calls POST /api/v1/strategies/deploy
+    → OpenClaw agent could do the same via API
+    → Same backtesting, same execution engine
+```
+
+The UI is a thin layer over the API. The API IS the platform.
+
+---
+
+Files Created
+
+File	Purpose	
+`cockpit/src/main.rs`	Axum API router — 80+ endpoints	
+`cockpit/src/agents.rs`	Agent registration, profiles, wallets	
+`cockpit/src/mcp.rs`	MCP server — 10 tools exposed to any MCP client	
+`cockpit/src/market.rs`	Price, orderbook, candles, funding, sentiment	
+`cockpit/src/trade.rs`	Market/limit/stop/OCO/bracket/TWAP/VWAP/iceberg orders	
+`cockpit/src/portfolio.rs`	P&L, positions, VaR, CVaR, exposure, correlation	
+`cockpit/src/indicators.rs`	Custom indicators, technical/fundamental/sentiment analysis	
+`cockpit/src/strategies.rs`	Strategy deployment, webhooks, automation	
+`cockpit/src/data.rs`	Data queries, news, research reports	
+`cockpit/src/defi.rs`	DEX swaps, liquidity, staking, yield farming	
+`cockpit/src/predictions.rs`	Prediction markets, sports betting	
+`cockpit/src/system.rs`	Health, venues, active agents	
+`cockpit/src/audit.rs`	Full audit trail	
+`cockpit/Cargo.toml`	Rust dependencies	
+
+---
+
+How to Run
+
+```bash
+# Start the cockpit API server
+cd cockpit && cargo run
+# → API on http://localhost:3000
+# → MCP on http://localhost:3000/mcp/tools
+# → WebSocket on ws://localhost:3000/ws
+
+# Start the human dashboard (optional)
+cd interface && npm run dev
+# → Dashboard on http://localhost:3001
+
+# Any agent connects via:
+# - MCP: Claude Desktop, Cursor, etc.
+# - REST: curl, Python requests, etc.
+# - WebSocket: Real-time trading bots
+# - Webhook: Signal services, alerts
+```
+
+---
+
+The cockpit doesn't fly. The agent does. The platform is a neutral, universal substrate — any agent framework (Hermes, OpenClaw, OpenHuman, LangChain, CrewAI, AutoGen, or custom) plugs in and gets full control over trading, data, risk, and automation.
+
 ⭐️⭐️⭐️WE CAN USE DIFFERENT AGENTS WITH DIFFERENT LLMs. EACH LLM/AGENT CAN SERVE A PURPOSE E.G GROK FOR TWITTER SCANNER. COMBIJE THIS IDEA WITH THE BOT WE CREATED⭐️⭐️⭐️
 
