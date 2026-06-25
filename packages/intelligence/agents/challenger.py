@@ -15,6 +15,7 @@ import httpx
 import structlog
 
 from .base import AgentProfile, BaseAgent, ToolExecutor
+from ..llm import ToolDefinition
 
 logger = structlog.get_logger(__name__)
 
@@ -142,6 +143,11 @@ CHALLENGER_TOOLS = [
 ]
 
 
+CHALLENGER_TOOL_DEFS: list[ToolDefinition] = [
+    ToolDefinition.from_dict(t) for t in CHALLENGER_TOOLS
+]
+
+
 class ChallengerAgent(BaseAgent):
     """
     The Adversarial Validator — challenges every signal before Parliament.
@@ -201,7 +207,7 @@ class ChallengerAgent(BaseAgent):
 
         result = await self.run_tool_loop(
             initial_message=prompt,
-            tools=CHALLENGER_TOOLS,
+            tools=CHALLENGER_TOOL_DEFS,
             tool_executor=self.executor,
             system=self.system_prompt,
         )

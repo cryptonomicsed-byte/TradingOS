@@ -1,6 +1,6 @@
 """
 TradingOS Intelligence Orchestrator
-FastAPI service that manages Claude agent lifecycle and coordinates
+FastAPI service that manages agent lifecycle and coordinates
 signal spawning, challenging, and parliament voting.
 """
 
@@ -147,7 +147,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="TradingOS Intelligence",
-    description="Claude-powered agent orchestration layer",
+    description="Agent-native signal intelligence layer",
     version="0.1.0",
     lifespan=lifespan,
 )

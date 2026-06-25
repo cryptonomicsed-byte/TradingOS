@@ -1,6 +1,6 @@
 """
 Base agent infrastructure for TradingOS.
-All Claude-powered agents inherit from BaseAgent.
+Provider-agnostic: each agent uses whatever LLM it has configured.
 """
 
 from __future__ import annotations
@@ -13,10 +13,18 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from typing import Any
 
-import anthropic
 import structlog
 from pydantic import BaseModel, Field
 from tenacity import retry, stop_after_attempt, wait_exponential
+
+from ..llm import (
+    LLMConfig,
+    LLMMessage,
+    LLMProvider,
+    LLMResponse,
+    ToolDefinition,
+    create_provider,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -32,7 +40,6 @@ class AgentProfile(BaseModel):
     agent_type: str
     name: str
     description: str
-    model: str = "claude-sonnet-4-6"
     temperature: float = 0.3
     max_tokens: int = 4096
 
@@ -49,6 +56,11 @@ class AgentProfile(BaseModel):
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+    # Per-agent LLM override — empty dict means "inherit from environment"
+    # Example: {"provider": "groq", "model": "llama-3.3-70b-versatile"}
+    # Example: {"provider": "ollama", "model": "llama3.2", "base_url": "http://localhost:11434/v1"}
+    llm: dict[str, Any] = Field(default_factory=dict)
+
     @property
     def accuracy(self) -> float:
         if self.total_predictions == 0:
@@ -59,7 +71,7 @@ class AgentProfile(BaseModel):
         self.total_predictions += 1
         if was_correct:
             self.correct_predictions += 1
-        # Reputation is exponentially weighted average (recent matters more)
+        # Exponentially weighted average — recent results matter more
         self.reputation = 0.95 * self.reputation + 0.05 * (1.0 if was_correct else 0.0)
 
 
@@ -69,11 +81,14 @@ class AgentProfile(BaseModel):
 
 class BaseAgent(ABC):
     """
-    Foundation for all Claude-powered TradingOS agents.
+    Foundation for all TradingOS agents.
+
+    Provider-agnostic: set LLM_PROVIDER / LLM_MODEL env vars,
+    or override per-agent via AgentProfile.llm dict.
 
     Provides:
-    - Structured Claude API calls with tool use
-    - Automatic retry with backoff
+    - LLM calls with tool use (any provider: Anthropic, OpenAI, Groq, Ollama, etc.)
+    - Automatic retry with exponential backoff
     - Outcome feedback and reputation tracking
     - Structured logging with agent context
     - Memory access via namespace isolation
@@ -88,15 +103,27 @@ class BaseAgent(ABC):
         self.profile = profile
         self.signal_bus_url = signal_bus_url or os.getenv("SIGNAL_BUS_URL", "http://signal-bus:7700")
         self.qdrant_url = qdrant_url or os.getenv("QDRANT_URL", "http://qdrant:6333")
-        self.client = anthropic.AsyncAnthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        self.llm: LLMProvider = create_provider(self._build_llm_config())
 
         self.log = logger.bind(
             agent_id=self.profile.id,
             agent_type=self.profile.agent_type,
             agent_name=self.profile.name,
+            llm_provider=self.llm.provider_name,
+            llm_model=self.llm.model,
         )
 
-        self._conversation_history: list[dict[str, Any]] = []
+        self._conversation_history: list[LLMMessage] = []
+
+    def _build_llm_config(self) -> LLMConfig:
+        """Start from env defaults, apply profile-level overrides."""
+        config = LLMConfig.from_env()
+        config.temperature = self.profile.temperature
+        config.max_tokens = self.profile.max_tokens
+        for k, v in self.profile.llm.items():
+            if hasattr(config, k):
+                setattr(config, k, v)
+        return config
 
     @property
     def system_prompt(self) -> str:
@@ -118,86 +145,89 @@ Core principles:
 Output format: Always respond with structured JSON unless told otherwise.
 """
 
-    @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=2, max=10),
-    )
-    async def call_claude(
-        self,
-        user_message: str,
-        tools: list[dict[str, Any]] | None = None,
-        system: str | None = None,
-    ) -> anthropic.types.Message:
-        """Make a Claude API call with automatic retry."""
-
-        messages = self._conversation_history + [
-            {"role": "user", "content": user_message}
-        ]
-
-        kwargs: dict[str, Any] = {
-            "model": self.profile.model,
-            "max_tokens": self.profile.max_tokens,
-            "system": system or self.system_prompt,
-            "messages": messages,
-        }
-
-        if tools:
-            kwargs["tools"] = tools
-
-        self.log.debug("Calling Claude API", message_len=len(user_message))
-        response = await self.client.messages.create(**kwargs)  # type: ignore[arg-type]
-
-        # Update conversation history for multi-turn
-        self._conversation_history.append({"role": "user", "content": user_message})
-        self._conversation_history.append({"role": "assistant", "content": response.content})
-
-        return response
-
     def reset_conversation(self) -> None:
         """Clear conversation history for a fresh context."""
         self._conversation_history = []
 
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+    )
+    async def call_llm(
+        self,
+        user_message: str,
+        tools: list[ToolDefinition] | None = None,
+        system: str | None = None,
+    ) -> LLMResponse:
+        """Make a provider-agnostic LLM call with automatic retry."""
+        history = list(self._conversation_history)
+        history.append(LLMMessage(role="user", content=user_message))
+
+        self.log.debug("Calling LLM", message_len=len(user_message))
+
+        resp = await self.llm.complete(
+            messages=history,
+            tools=tools,
+            system=system or self.system_prompt,
+        )
+
+        # Update shared conversation history for multi-turn sessions
+        self._conversation_history.append(LLMMessage(role="user", content=user_message))
+        self._conversation_history.append(LLMMessage(
+            role="assistant",
+            content=resp.content,
+            tool_calls=resp.tool_calls,
+        ))
+
+        return resp
+
     async def run_tool_loop(
         self,
         initial_message: str,
-        tools: list[dict[str, Any]],
+        tools: list[ToolDefinition],
         tool_executor: "ToolExecutor",
         system: str | None = None,
     ) -> str:
         """
-        Run a ReAct-style tool use loop until Claude stops calling tools.
+        Run a ReAct-style tool use loop until the LLM stops calling tools.
         Returns the final text output.
         """
-        message = initial_message
-        max_iterations = 10
+        sys_prompt = system or self.system_prompt
+        messages: list[LLMMessage] = list(self._conversation_history)
+        messages.append(LLMMessage(role="user", content=initial_message))
 
-        for _ in range(max_iterations):
-            response = await self.call_claude(message, tools=tools, system=system)
+        resp = await self.llm.complete(messages=messages, tools=tools, system=sys_prompt)
+        messages.append(LLMMessage(
+            role="assistant",
+            content=resp.content,
+            tool_calls=resp.tool_calls,
+        ))
 
-            # If no tool calls, we're done
-            if response.stop_reason != "tool_use":
-                text_blocks = [b for b in response.content if b.type == "text"]
-                return text_blocks[0].text if text_blocks else ""
+        for _ in range(10):
+            if not resp.has_tool_calls:
+                return resp.content or ""
 
-            # Execute tool calls
             tool_results = []
-            for block in response.content:
-                if block.type == "tool_use":
-                    self.log.debug("Executing tool", tool=block.name, input=block.input)
-                    result = await tool_executor.execute(block.name, block.input)
-                    tool_results.append({
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": json.dumps(result),
-                    })
+            for tc in resp.tool_calls:
+                self.log.debug("Executing tool", tool=tc.name)
+                result = await tool_executor.execute(tc.name, tc.arguments)
+                tool_results.append({
+                    "tool_call_id": tc.id,
+                    "name": tc.name,
+                    "content": json.dumps(result),
+                })
 
-            # Continue conversation with tool results
-            self._conversation_history.append({
-                "role": "user",
-                "content": tool_results,
-            })
-
-            message = "Continue based on the tool results."
+            resp = await self.llm.complete_tool_result(
+                messages=messages,
+                tool_results=tool_results,
+                tools=tools,
+                system=sys_prompt,
+            )
+            messages.append(LLMMessage(
+                role="assistant",
+                content=resp.content,
+                tool_calls=resp.tool_calls,
+            ))
 
         return "Max iterations reached"
 
@@ -233,7 +263,3 @@ class ToolExecutor:
         if asyncio.iscoroutinefunction(fn):
             return await fn(**arguments)
         return fn(**arguments)
-
-    def to_claude_format(self) -> list[dict[str, Any]]:
-        """Tools are registered with their schemas separately."""
-        return []

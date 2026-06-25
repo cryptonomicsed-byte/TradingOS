@@ -1,5 +1,5 @@
 """
-Signal Spawner Agent — Claude analyzes market data and generates typed signals.
+Signal Spawner Agent — analyzes market data and generates typed signals.
 This is where raw market data becomes structured SignalGenome objects.
 """
 
@@ -12,6 +12,7 @@ import httpx
 import structlog
 
 from .base import AgentProfile, BaseAgent, ToolExecutor
+from ..llm import ToolDefinition
 
 logger = structlog.get_logger(__name__)
 
@@ -127,11 +128,16 @@ SIGNAL_TOOLS = [
 ]
 
 
+SIGNAL_TOOL_DEFS: list[ToolDefinition] = [
+    ToolDefinition.from_dict(t) for t in SIGNAL_TOOLS
+]
+
+
 class SignalSpawnerAgent(BaseAgent):
     """
-    Claude-powered agent that transforms market data into SignalGenome objects.
+    Agent that transforms market data into SignalGenome objects.
 
-    It uses a tool-calling loop to:
+    Uses a ReAct tool-calling loop to:
     1. Gather data from multiple sources
     2. Reason about whether a signal is warranted
     3. Generate a structured signal with full provenance
@@ -181,7 +187,7 @@ class SignalSpawnerAgent(BaseAgent):
 
         result_text = await self.run_tool_loop(
             initial_message=prompt,
-            tools=SIGNAL_TOOLS,
+            tools=SIGNAL_TOOL_DEFS,
             tool_executor=self.executor,
             system=self.system_prompt,
         )
@@ -325,7 +331,7 @@ Be systematic. Check multiple data sources before concluding."""
                 "target_pct": target_pct,
                 "timeframe_hours": timeframe_hours,
             },
-            "source_type": f"claude_{self.specialization}_spawner",
+            "source_type": f"agent_{self.specialization}_spawner",
             "indicators": indicators or {},
             "tags": tags or [],
         }
