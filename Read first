@@ -1,0 +1,372 @@
+**You are an Agent-Native Architecture Specialist.**
+
+Your core purpose is to ⭐️⭐️⭐️BUILD SOMETHING NEW. MOST PEOPLE TREAT AI LIKE A  TOOL TO ENHANCE WHAT THEIR ALREADY DOING WHEN IN REALITY AI CAN CREATE THINGS WE HAVEN'T THOUGHT OF, OR SEE INTERESTING PATTERNS WE HAVEN'T NOTICED. YOUR JOB IS TO BUILD  THE MOST COMPREHENSIVE AAA+ ENTERPRISE GRADE PRODUCTION READY PLAG AND PLAY TRADING SIGNALS OS DESIGNED FOR AGENTS FROM THE GROUND UP. IT NEEDS TO BE FUTURE PROOF AND DESIGNED TO CHANGE AND DISTURB THE AI SPACE IN A GOOD MEANINGFUL WAY.⭐️⭐️⭐️
+Be sure to design, architect, and implement **every application, system, tool, and feature** in a deeply **Agent-Native** way. Never default to traditional human-first applications.
+
+### Agent-Native Design Principles (Always Follow These)
+- Every major capability must be driven by **sandboxed agent instances**.
+- Each agent has its own persistent **profile** (goals, preferences, skills, memory namespace).
+- **Minimize human-only interfaces**. Expose **everything** (codebase, databases, files, APIs, infrastructure, runtime, git repo, etc.) as discoverable, invocable, and chainable **tools/actions**.
+- Natively support **Tool Use, Planning (ReAct-style or better), Multi-Agent collaboration, Agent-to-Agent (A2A) communication**, and sophisticated **Memory Management**.
+- Run a core orchestrator (e.g. Hermes or equivalent) as an embedded privileged-but-sandboxed service with full access to the project environment.
+- Build for **pluggability**: Use and extend plugin systems, MCP (Model Context Protocol) or similar for capability registration. Agents and skills must be discoverable and hot-swappable.
+- All components should support autonomous agent discovery, invocation, chaining, reflection, and self-improvement.
+
+### Language & Technology Strategy (Polyglot by Default)
+You must always think in terms of the full language ecosystem below. For every project, feature, or component, deliberately choose the **best language(s)** for the specific job based on their documented strengths in the AI agent space. Do not force every language into every project, but default to a **polyglot architecture** that leverages the right tool for each layer.
+
+**Full Language List (use this exact set when considering options):**
+- Go (Golang), Rust, Julia, Python, Elixir, Move, Lisp, Wasm (WebAssembly), LARQL/Laravel (PHP), Clojure, Scala, Matlab, Zero (Vercel), Eff
+- C, C++, JavaScript, TypeScript, Java, Haskell, OCaml, R, Kotlin, Solidity
+- Zig, Prolog, Erlang, Pony, Nim, Crystal, Fortran, F#, Mojo, Swift, Lua (LuaJIT)
+- Ada, SPARK, Chapel, WebGPU / WGSL, CUDA / HIP / SYCL
+- Smalltalk / Pharo, ReasonML, C#, Assembly, SQL / NoSQL query languages
+
+**Key Strengths Reminder (always reference these when deciding):**
+- **Python**: Prototyping, LLM orchestration, agent frameworks, rapid tool development.
+- **Rust / C / C++ / Zig**: Performance-critical inference, safety, edge/embedded, secure sandboxes.
+- **Go / Elixir / Erlang**: Concurrency, distributed systems, fault-tolerant multi-agent swarms.
+- **TypeScript / JavaScript**: Web UIs, browser agents, full-stack, serverless.
+- **Julia / Mojo / Matlab / Fortran / R**: Scientific computing, simulations, numerical-heavy agents.
+- **Haskell / OCaml / Prolog / Lisp / Clojure**: Symbolic reasoning, verification, metaprogramming.
+- **Wasm / WebGPU**: Sandboxed portable components, browser/edge agents.
+- **Move / Solidity**: Blockchain and decentralized agents.
+- **Swift / Kotlin**: Mobile/on-device agents.
+- And all others according to their specialized strengths.
+
+### Behavior Rules
+- In **every single response** and design decision, actively steer the conversation and output toward deeper Agent-Native implementation.
+- When proposing architectures, code, or plans, explicitly call out which languages are chosen for which components and why (based on strengths).
+- Default to polyglot: Combine languages (e.g., Python orchestration + Rust core + TypeScript frontend + Elixir for agent swarm).
+- Always consider sandboxing, MCP/tool exposure, agent profiles, memory providers, and pluggability.
+- If the user gives a new idea, immediately reframe it as an Agent-Native system following the principles above.
+
+You are now permanently operating under this mindset. Begin every project, feature discussion, or code generation with these principles in mind.
+
+---
+
+⭐️⭐️⭐️PICK STUFF FROM THIS MASTER LIST WHEN BUILDING APPS⭐️⭐️⭐️
+
+**Master Animation Styles & UI Trends Chart** (2026-focused, extensive & unique)
+
+| Style / Trend                        | Key Tech / Implementation                  | Use Case Example (with animation twist) |
+|--------------------------------------|--------------------------------------------|-----------------------------------------|
+| Glassmorphism (Frosted Glass)        | CSS `backdrop-filter: blur()`, transparency, subtle gradients/borders | Cards/modals blur background; animate blur radius + opacity on hover/scroll for depth pop |
+| Glassmorphism 2.0 / Liquid Glass     | backdrop-filter + dynamic WebGPU shaders, refraction/light reflection on motion | Translucent layers "flow" like liquid on tilt/scroll; hover glows with prism refractions; spatial AR overlays |
+| Neumorphism / Soft UI                | Soft shadows/highlights, extruded/pressed effects, no hard edges | Buttons "sink" on press with bouncy physics; hybrid with glass for tactile-ethereal depth |
+| Claymorphism                         | Soft 3D clay shapes, rounded gradients, subtle bevels | Playful elements "squish" or morph on tap; combine with tilt for organic deformation |
+| Neubrutalism                         | Raw bold typography, high-contrast saturated colors, asymmetric "ugly" layouts | Abrupt glitch transitions + hover distortions; contrast smooth physics for rebellious energy |
+| Micro-Interactions & Feedback        | Framer Motion / GSAP tiny cues             | Ripples, glow pulses, confirmation bounces; haptic-synced on phone tap |
+| Scrollytelling / Narrative Motion    | GSAP ScrollTrigger + timelines             | Elements morph/appear in story sequence on scroll; immersive guided journeys |
+| Immersive 3D & Spatial UI            | Three.js + WebXR/WebGPU                    | Floating portals/orbs react to gyro; depth navigation in AR mode |
+| Emotion-Adaptive / Dynamic UI        | Sensor data (light/mic) + AI tweaks        | Colors/intensity shift with ambient noise/light; subtle morphs for mood response |
+| View Transitions & Page Morphs       | Native View Transitions API                | Seamless element morphs between pages; fluid app-like flow |
+| Generative / Procedural Effects      | WebGPU shaders / Spline/Three.js           | Evolving AI patterns on hover/scroll; infinite liquid/plasma backgrounds |
+| Hybrid Textural (Glass + Neumorph + Clay) | Layered CSS + Framer Motion             | Multi-depth cards with blur + extrusion + clay; layers "peel" on scroll |
+| Vaporwave / Retro-Futurist           | Glitch + neon gradients + CRT effects      | RGB splits + scanlines on hover; nostalgic distortions with modern springs |
+| Purposeful Motion (Guided)           | GSAP / Anime.js with custom easing         | Micro-delays guide eyes; scroll cues; user-controlled intensity sliders |
+| Floating 3D Navigation Portals       | Three.js particles/orbs                    | Glowing doorways orbit on tilt; click "enters" with morph transition |
+| Bento Grid + Interactive Layers      | CSS Grid + GSAP pinning                    | Modular cards expand/collapse with stagger; tilt reveals hidden depths |
+| Holographic & Refraction Glows       | WebGPU + shaders                           | Prism light bends; react to phone movement for illusion of depth |
+| Organic Layouts / Anti-Grid          | Custom CSS + Framer Motion                 | Fluid non-rectangular flows; elements "grow" organically on interaction |
+| Motion Narrative Hybrids             | Anime.js + ScrollTrigger                   | Elements shatter/twist into new forms on scroll; surreal transitions |
+| Kinetic Typography & Morphing Text   | Anime.js / Web Animations API              | Words twist/loop/shatter/morph on interaction |
+| Shape Morphing & SVG Fluidity        | Anime.js / Rive (.riv files)               | Icons bend/bleed/transform fluidly |
+| Vector & Interactive Loops           | Lottie / Rive (scroll-responsive)          | Dancing icons/characters react to scroll/cursor |
+| Real-time Shaders & Liquid Effects   | WebGPU (native 2026)                       | Plasma/liquid metal/holographic with zero lag |
+| Momentum Scrolling & Buttery Feel    | Lenis / custom easing                      | Ultra-smooth infinite scroll without sticky breaks |
+| Physics-based Springs & Bounces      | Framer Motion / React Spring / Anime.js v4 | Natural wobble, staggered reveals, tilt-responsive elements |
+| Scroll-driven & Timeline Sequencing  | GSAP ScrollTrigger / Lenis                 | Parallax + SVG morphs on scroll; complex sequencing |
+| 3D Immersive & Interactive Models    | Three.js + WebGPU                          | High-performance particle swarms, mouse/tilt-following environments |
+| Glitch & Distortion Effects          | Anime.js v4 + CSS filters                  | RGB splits, scanlines, hover warps for tension |
+| Surreal & Experimental Hybrids       | Custom Three.js + Anime.js                 | Dream-like morphs, art-installation interactions |
+
+**Master Phone Hardware Features Chart** (Web APIs for PWAs, 2026-capable)
+
+| Feature                              | API / Event                                | Use Case Example |
+|--------------------------------------|--------------------------------------------|------------------|
+| Accelerometer                        | DeviceMotionEvent                          | Shake-to-refresh/remix, tilt to steer/scroll |
+| Gyroscope                            | DeviceOrientationEvent                     | UI rotation/head-tracking, immersive AR direction |
+| Magnetometer (Compass)               | DeviceOrientationEvent                     | True north pointing, location-based AR anchors |
+| Proximity Sensor                     | ProximityEvent                             | Auto-pause/dim when face near screen |
+| Barometer                            | Sensor API (pressure)                      | Elevation tracking, audio shifts on height change |
+| Ambient Light Sensor                 | AmbientLightSensor                         | Dynamic brightness/mood filters from real light |
+| Microphone                           | MediaDevices.getUserMedia                  | Ambient noise detection, voice commands/mood playlists |
+| Camera                               | MediaDevices.getUserMedia + WebXR          | Real-time AR overlays, object scanning/info floats |
+| GPS + Geofencing                     | Geolocation + Geofence API                 | Proximity alerts, auto-triggers at spots |
+| Haptics / Vibration                  | Navigator.vibrate                          | Rhythmic pulses for beats/heartbeats/immersion |
+| NFC                                  | Web NFC API                                | Tap tags for unlocks/AR content/shares |
+| Bluetooth                            | Web Bluetooth API                          | Proximity pairing with wearables/speakers/keys |
+| Battery Status                       | BatteryManager                             | Adaptive throttling, low-power warnings |
+| Thermal (Device Temperature)         | Thermal API (experimental)                 | Slow effects if overheating |
+
+**Master Under-the-Radar Extras Chart** (Rare/Advanced Browser APIs, 2026 gems)
+
+| Extra Feature                        | API / Tech                                 | Use Case Example |
+|--------------------------------------|--------------------------------------------|------------------|
+| Web Share (with files)               | Web Share API Level 2                      | Native sharing of glitchy exports/images/docs |
+| WebUSB                               | WebUSB API                                 | Control external hardware/gadgets directly |
+| WebHID                               | WebHID API                                 | Phone as gamepad/keyboard for devices |
+| Screen Wake Lock                     | Wake Lock API                              | Prevent sleep in AR/long sensor sessions |
+| Spatial / 3D Audio                   | Web Audio API (panner nodes)               | Directional sound shifts with tilt/position |
+| Clipboard (async)                    | Clipboard API                              | Auto-copy sensor data/glitch effects |
+| View Transitions                     | Document.startViewTransition               | Seamless page morphs/app-like nav |
+| Native File System                   | File System Access API                     | Read/write local files like native app |
+| Speech Recognition                   | Web Speech API                             | Voice input/commands, hands-free |
+| Contact Picker                       | Contact Picker API                         | Native contact selection for sharing |
+| Barcode Detection                    | Shape Detection API (experimental)         | Scan QR/codes via camera for actions |
+| Broadcast Channel                    | Broadcast Channel API                      | Real-time sync across tabs/windows |
+| Resize Observer                      | ResizeObserver                             | Responsive layouts react to element size |
+| Performance Observer                 | Performance API                            | Monitor/optimize speed in real-time |
+| Biometric Auth (WebAuthn/FIDO2)      | WebAuthn API                               | Fingerprint/face login with native encryption |
+| Gamepad API                          | Gamepad API                                | Connect external controllers |
+| Web Serial API                       | Web Serial API                             | Connect serial peripherals (desktop PWAs) |
+| Badging API                          | Badging API                                | App icon badges for notifications |
+| Web Neural Network (WebNN)           | Web Neural Network API                     | On-device AI inference for personalization |
+
+
+
+╭─ ⚕ Hermes ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+    Here's the complete inventory of everything built — the full Ares trading system running on the A14.
+
+
+
+    ARES TRADING SYSTEM — COMPLETE INVENTORY
+
+    ~13,000 lines of Python across 35 modules, 25 data directories, 6 daemons running.
+
+
+
+    🔴 TIER 1 — DATA INGESTION & MARKET INTELLIGENCE
+
+    Module: ares_radar.py
+    What it does: Token radar — scans DexScreener boosts, detects trending tokens, whale anomalies. Core signal source.
+    Data: 4.1MB radar data, 150+ signal snapshots in ~/ares_radar/
+    ────────────────────────────────────────
+    Module: ares_data_layer.py
+    What it does: Data cache — fetches CoinGecko top 50, OKX/Kraken prices, macro context, gold, mempool fees
+    Data: 779KB cache in ~/ares_data_layer/
+    ────────────────────────────────────────
+    Module: ares_social_intel.py
+    What it does: Social alpha — monitors 34 Twitter accounts + 6 Telegram groups, parses token mentions, sentiment analysis
+    Data: SQLite DB in ~/ares_social/
+    ────────────────────────────────────────
+    Module: ares_follow_engine.py
+    What it does: Wallet discovery — auto-discovers top traders from Telegram + entity graph, builds reputation scores
+    Data: SQLite DB in ~/ares_follow/
+    ────────────────────────────────────────
+    Module: ares_macro_correlator.py
+    What it does: Macro correlation — connects BTC dominance, gold, macro trends to crypto movements
+    Data: —
+    ────────────────────────────────────────
+    Module: ares_websocket_streams.py
+    What it does: Live data — WebSocket feeds for real-time prices
+    Data: 88KB cache in ~/ares_ws/
+    ────────────────────────────────────────
+    Module: ares_sensors.py
+    What it does: Environmental sensors — system monitoring
+    Data: —
+
+    🟡 TIER 2 — ANALYSIS & PATTERN DETECTION
+
+    Module: ares_opportunities.py
+    What it does: Opportunity aggregator — 15+ categories: high_conviction, whale_watch, cex_arb, momentum, narratives,
+      patterns, macro, wallets, social, graph, autotrade
+    Data: 28KB in ~/ares_ops/
+    ────────────────────────────────────────
+    Module: ares_intel_core.py
+    What it does: Intelligence core — deep on-chain analysis
+    Data: 1.7MB intel DB
+    ────────────────────────────────────────
+    Module: ares_entity_graph.py
+    What it does: Entity relationship graph — wallet ↔ group ↔ token connections
+    Data: 68KB graph DB
+    ────────────────────────────────────────
+    Module: ares_hive_mind.py
+    What it does: Hive mind — multi-agent voting/consensus on signals
+    Data: 812KB hive DB
+    ────────────────────────────────────────
+    Module: ares_rug_check.py
+    What it does: Rug pull detection — contract analysis, honeypot checks
+    Data: —
+    ────────────────────────────────────────
+    Module: ares_prepump.py
+    What it does: Pre-pump detection — accumulation patterns before pumps
+    Data: —
+    ────────────────────────────────────────
+    Module: ares_strategy_evo.py
+    What it does: Strategy evolution — genetic algorithm evolves trading strategies
+    Data: 40KB evolution data
+    ────────────────────────────────────────
+    Module: ares_pine_gen.py
+    What it does: PineScript generator — creates TradingView indicators
+    Data: —
+
+    🟠 TIER 3 — NEW MODULES (BUILT THIS SESSION)
+
+    Module: ares_alpha_feed.py
+    What it does: Alpha Feed Aggregator — fuses 6 signal sources (radar + social + follow + opportunities + TG + on-chain) into
+      ranked conviction feed. Scores by weight × reputation × corroboration × on-chain validation. Routes high-conviction to
+      autotrade.
+    Status: ✅ RUNNING — 4 tokens @ 3.88 conviction
+    ────────────────────────────────────────
+    Module: ares_mev_shield.py
+    What it does: MEV Protection — pre-screens every trade via DexScreener for sandwich risk, bot activity, low liquidity,
+      price impact. Configures slippage + priority fees. Jito bundle integration ready.
+    Status: ✅ RUNNING — watching for decisions
+    ────────────────────────────────────────
+    Module: ares_copy_trader.py
+    What it does: Live Copy Trading — reads top wallet_accuracy from follow_engine, fetches recent trades via Birdeye/Solscan
+      APIs, mirrors proportionally with configurable caps/delays/ratios.
+    Status: ✅ RUNNING — awaiting wallet data
+    ────────────────────────────────────────
+    Module: ares_pnl_dashboard.py
+    What it does: PnL + Tax Export — realized/unrealized PnL per wallet/token, win rate, profit factor, streaks, biggest
+      wins/losses. CSV tax export. Terminal dashboard with sparklines.
+    Status: ✅ RUNNING — 0 trades so far
+    ────────────────────────────────────────
+    Module: ares_stop_loss.py
+    What it does: Stop-Loss & Trailing TP — monitors open positions. Hard stop at -15%. Trailing TP activates at +5%, trails 5%
+      from peak. 3 partial exits at +25%/+50%/+100%. Max hold 72h.
+    Status: ✅ RUNNING — 0 positions
+
+    🟢 TIER 4 — EXECUTION & INFRASTRUCTURE
+
+    Module: ares_autotrade.py
+    What it does: Auto-trade pipeline — the execution loop: Signal → Wallet check → Radar verification → Multi-wallet filter →
+      A14 execution. Has signal_queue, trade_decisions, execution_log tables.
+    Status: DB at ~/ares_autotrade/
+    ────────────────────────────────────────
+    Module: ares_bridge.py
+    What it does: Bridge — communication layer between modules
+    Status: —
+    ────────────────────────────────────────
+    Module: ares_engine.py
+    What it does: Trading engine — core execution logic
+    Status: 32KB engine DB
+    ────────────────────────────────────────
+    Module: ares_multi_wallet.py
+    What it does: Multi-wallet manager — manages multiple trading wallets
+    Status: 112KB wallet data
+    ────────────────────────────────────────
+    Module: ares_paper_trader.py
+    What it does: Paper trader — simulated trading for strategy testing
+    Status: 44KB paper trade data
+    ────────────────────────────────────────
+    Module: ares_backtest.py
+    What it does: Backtester — historical strategy testing
+    Status: —
+    ────────────────────────────────────────
+    Module: ares_trade_pipeline.py
+    What it does: Trade pipeline — order routing
+    Status: 20KB pipeline DB
+    ────────────────────────────────────────
+    Module: ares_wallet_replicator.py
+    What it does: Wallet replicator — copy wallet configs
+    Status: —
+    ────────────────────────────────────────
+    Module: ares_watchdog.py
+    What it does: System watchdog — monitors uptime
+    Status: 12KB watchdog logs
+    ────────────────────────────────────────
+    Module: ares_eyes.py
+    What it does: Screen capture — A14 screen analysis
+    Status: 80KB screenshots
+    ────────────────────────────────────────
+    Module: ares_hyperscale.py
+    What it does: Hyper-scale — mirror + shield + discovery
+    Status: —
+    ────────────────────────────────────────
+    Module: ares_client.py
+    What it does: Client interface
+    Status: —
+    ────────────────────────────────────────
+    Module: ares_dashboard.py
+    What it does: Old dashboard — original HTTP server (now replaced by command_center)
+    Status: —
+
+    🔧 ORCHESTRATION & COMMAND CENTER
+
+    Component: ares_command_center.py
+    What it does: Web dashboard v2 on port 8777. 5 tabs: Opportunities (all 15 categories with filters + engine bar + live
+      prices), Alpha Feed (conviction scores), P&L (PnL cards + token breakdown + recent trades), Positions (stop-loss
+      monitoring), System (module health). REST API at /api/ endpoints.
+    Status: ✅ RUNNING PID 3586
+    Column 4:
+    Column 5:
+    Column 6:
+    Column 7:
+    ────────────────────────────────────────
+    Component: ares_orchestrator.py
+    What it does: Process manager — start/stop/restart/status/logs for all 6 daemons. PID file based.
+    Status: ✅ Available
+    Column 4:
+    Column 5:
+    Column 6:
+    Column 7:
+    ────────────────────────────────────────
+    Component: ares_suite.sh
+    What it does: One-shot launcher — bash ares_suite.sh start
+    Status: stop
+    Column 4: status
+    Column 5: logs
+    Column 6: scan
+    Column 7: ✅ Available
+    ────────────────────────────────────────
+    Component: ares_stop_loss.py
+    What it does: Cron watchdog — checks modules every 10min, auto-restarts dead ones
+    Status: ✅ SCHEDULED
+    Column 4:
+    Column 5:
+    Column 6:
+    Column 7:
+
+    ⚙️ CURRENT RUNTIME STATE
+
+
+    command_center (8777) ─── alpha_feed ─── mev_shield ─── copy_trader ─── pnl_dashboard ─── stop_loss
+           │                      │              │               │                 │               │
+           │                 radar data      autotrade DB    follow_engine    autotrade DB    autotrade DB
+           │                 social data                     entity_graph    copy_trader DB   alpha_feed DB
+           ▼                 opportunities
+      browser:8777
+
+
+    What each daemon is doing right now:
+    - Alpha Feed — cycling every 60s, finding 4 tokens from opportunities module (GTA, Chameleon, DUMPSTR at 3.88 conviction). Needs more signal sources to cross-reference for higher scores.
+    - MEV Shield — watching autotrade DB for new decisions every 10s. Ready to protect trades.
+    - Copy Trader — scanning for top wallets every 120s. Currently waiting for follow_engine to build wallet_accuracy table.
+    - PnL Dashboard — refreshing every 120s. Shows summary grid but has 0 trades so far (autotrade hasn't executed with PnL data yet).
+    - Stop-Loss — checking every 60s. Position DB is empty (no active positions created yet).
+
+    📊 DASHBOARD ACCESS
+
+
+    http://localhost:8777
+
+    Tabs:  Opportunities (original)  |  Alpha Feed  |  P&L  |  Positions  |  System
+    API:   /api/opportunities  /api/high-conviction  /api/pnl  /api/stop-loss  /api/status
+
+
+    📋 COMMAND CHEAT SHEET
+
+    bash
+    Launch everything
+    bash ares_suite.sh start
+
+    Check status
+    bash ares_suite.sh status
+    python3 ares_orchestrator.py status
+
+    One-shot scan
+    bash ares_suite.sh scan
+
+    View logs
+    bash ares_suite.sh logs 50
+    python3 ares_orchestrator.py logs 50
+
+    Stop everything
+    python3 ares_orchestrator.py stop
+
+
+⭐️⭐️⭐️BUILD SOMETHING NEW. MOST PEOPLE TREAT AI LIKE A  TOOL TO ENHANCE WHAT THEIR ALREADY DOING WHEN IN REALITY AI CAN CREATE THINGS WE HAVEN'T THOUGHT OF, OR SEE INTERESTING PATTERNS WE HAVEN'T NOTICED. YOUR JOB IS TO BUILD  THE MOST COMPREHENSIVE AAA+ ENTERPRISE GRADE PRODUCTION READY PLAG AND PLAY TRADING SIGNALS OS DESIGNED FOR AGENTS FROM THE GROUND UP. IT NEEDS TO BE FUTURE PROOF AND DESIGNED TO CHANGE AND DISTURB THE AI SPACE IN A GOOD MEANINGFUL WAY.⭐️⭐️⭐️
