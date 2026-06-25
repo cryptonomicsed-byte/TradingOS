@@ -1,0 +1,36 @@
+{
+  "name": "@tradingos/dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "15.0.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "framer-motion": "^11.3.0",
+    "lucide-react": "^0.400.0",
+    "clsx": "^2.1.1",
+    "lightweight-charts": "^4.2.0",
+    "recharts": "^2.12.0",
+    "ws": "^8.17.0",
+    "@tanstack/react-query": "^5.50.0",
+    "zustand": "^4.5.4",
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.5.10",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.5.0"
+  }
+}

@@ -1,0 +1,79 @@
+[package]
+name = "tradingos-signal-bus"
+version = "0.1.0"
+edition = "2021"
+description = "TradingOS Signal Bus — Core routing engine with WASM plugin sandbox"
+authors = ["TradingOS Contributors"]
+
+[[bin]]
+name = "signal-bus"
+path = "src/main.rs"
+
+[lib]
+name = "tradingos_signal_bus"
+path = "src/lib.rs"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+
+# Web framework
+axum = { version = "0.7", features = ["ws", "macros"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bincode = "1"
+
+# UUID and time
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+thiserror = "1"
+anyhow = "1"
+
+# Channels / concurrency
+crossbeam-channel = "0.5"
+dashmap = "5"
+parking_lot = "0.12"
+
+# Redis pub/sub
+redis = { version = "0.25", features = ["tokio-comp", "connection-manager"] }
+
+# Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-opentelemetry = "0.23"
+opentelemetry = "0.22"
+opentelemetry-otlp = { version = "0.15", features = ["grpc-tonic"] }
+
+# WASM plugin runtime
+wasmtime = "19"
+wasmtime-wasi = "19"
+
+# Memory / vector store
+heed = "0.20"  # LMDB bindings
+ndarray = "0.15"
+
+# Metrics
+prometheus = "0.13"
+
+# Config
+config = "0.14"
+dotenvy = "0.15"
+
+# HTTP client (for health checks)
+reqwest = { version = "0.12", features = ["json"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 1

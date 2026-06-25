@@ -1,0 +1,218 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* ═══════════════════════════════════════════
+   TRADINGOS DESIGN SYSTEM — 2026
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Core palette — deep space trading terminal */
+  --bg-void: #0a0a0f;
+  --bg-surface: #111118;
+  --bg-elevated: #16161f;
+  --bg-overlay: rgba(22, 22, 31, 0.85);
+
+  /* Neon accent system */
+  --neon-cyan: #00f5ff;
+  --neon-purple: #8b5cf6;
+  --neon-green: #00ff88;
+  --neon-orange: #ff6b35;
+  --neon-red: #ff2d55;
+  --neon-gold: #ffd700;
+
+  /* Conviction color scale */
+  --conviction-critical: #ff2d55;
+  --conviction-low: #ff6b35;
+  --conviction-medium: #ffd700;
+  --conviction-high: #00ff88;
+  --conviction-apex: #00f5ff;
+
+  /* Glass morphism */
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ─────────── SCROLLBAR ─────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* ─────────── GLASSMORPHISM 2.0 ─────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-elevated {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.7);
+}
+
+/* Liquid glass effect — hover triggers refraction */
+.glass-liquid {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-liquid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 50%,
+    rgba(139, 92, 246, 0.03) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glass-liquid:hover::before {
+  opacity: 1;
+}
+
+.glass-liquid:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.1), 0 16px 64px rgba(0, 0, 0, 0.7);
+  transform: translateY(-1px);
+}
+
+/* ─────────── NEON GLOWS ─────────── */
+.glow-cyan { box-shadow: 0 0 20px rgba(0, 245, 255, 0.3), 0 0 60px rgba(0, 245, 255, 0.1); }
+.glow-purple { box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 60px rgba(139, 92, 246, 0.15); }
+.glow-green { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3), 0 0 60px rgba(0, 255, 136, 0.1); }
+.glow-red { box-shadow: 0 0 20px rgba(255, 45, 85, 0.3), 0 0 60px rgba(255, 45, 85, 0.1); }
+
+.text-glow-cyan { text-shadow: 0 0 20px rgba(0, 245, 255, 0.7); }
+.text-glow-green { text-shadow: 0 0 20px rgba(0, 255, 136, 0.7); }
+.text-glow-purple { text-shadow: 0 0 20px rgba(139, 92, 246, 0.7); }
+.text-glow-red { text-shadow: 0 0 20px rgba(255, 45, 85, 0.7); }
+
+/* ─────────── CONVICTION INDICATORS ─────────── */
+.conviction-apex { color: var(--neon-cyan); }
+.conviction-high { color: var(--neon-green); }
+.conviction-medium { color: var(--neon-gold); }
+.conviction-low { color: var(--neon-orange); }
+.conviction-critical { color: var(--neon-red); }
+
+/* ─────────── PARTICLES BACKGROUND ─────────── */
+.particle-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(0, 245, 255, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 255, 136, 0.02) 0%, transparent 70%);
+}
+
+/* ─────────── AGENT ACTIVITY PULSE ─────────── */
+@keyframes agent-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes conviction-rise {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0% 0 0 0); }
+}
+
+@keyframes signal-flow {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+@keyframes parliament-vote {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.agent-active { animation: agent-pulse 2s ease-in-out infinite; }
+.vote-appear { animation: parliament-vote 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* ─────────── DATA TYPOGRAPHY ─────────── */
+.data-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.data-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ─────────── STATUS BADGES ─────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badge-spawned { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3); }
+.badge-parliament { background: rgba(0, 245, 255, 0.1); color: #00f5ff; border: 1px solid rgba(0, 245, 255, 0.25); }
+.badge-approved { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.25); }
+.badge-active { background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid rgba(0, 255, 136, 0.4); animation: agent-pulse 3s ease-in-out infinite; }
+.badge-rejected { background: rgba(255, 45, 85, 0.1); color: #ff2d55; border: 1px solid rgba(255, 45, 85, 0.25); }
+
+/* ─────────── CONVICTION BAR ─────────── */
+.conviction-bar {
+  height: 3px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.conviction-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─────────── GRID SYSTEM ─────────── */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+
+/* ─────────── SCROLLABLE PANEL ─────────── */
+.panel-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
