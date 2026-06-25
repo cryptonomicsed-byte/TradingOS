@@ -2643,5 +2643,4 @@ cd interface && npm run dev
 
 The cockpit doesn't fly. The agent does. The platform is a neutral, universal substrate — any agent framework (Hermes, OpenClaw, OpenHuman, LangChain, CrewAI, AutoGen, or custom) plugs in and gets full control over trading, data, risk, and automation.
 
-⭐️⭐️⭐️WE CAN USE DIFFERENT AGENTS WITH DIFFERENT LLMs. EACH LLM/AGENT CAN SERVE A PURPOSE E.G GROK FOR TWITTER SCANNER. COMBIJE THIS IDEA WITH THE BOT WE CREATED⭐️⭐️⭐️
 
