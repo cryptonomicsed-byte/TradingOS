@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tradingos-agent-hub"
+version = "1.0.0"
+description = "TradingOS Agent Hub — universal agent interface for accounts, memory, and A2A messaging"
+requires-python = ">=3.11"
+
+dependencies = [
+    # Web framework
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+
+    # Database
+    "asyncpg>=0.29.0",
+
+    # Cache + messaging
+    "redis[asyncio]>=5.0.0",
+
+    # Vector store with built-in embeddings
+    "qdrant-client[fastembed]>=1.9.0",
+
+    # Auth
+    "python-jose[cryptography]>=3.3.0",
+
+    # Utils
+    "pydantic>=2.7.0",
+    "structlog>=24.0.0",
+    "python-dotenv>=1.0.0",
+    "httpx>=0.27.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+    "httpx>=0.27.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
