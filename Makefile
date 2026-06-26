@@ -5,18 +5,24 @@
 # ─── FULL STACK ──────────────────────────────────────────────
 
 up:
-	@echo "🚀 Launching TradingOS..."
+	@echo "Launching TradingOS..."
 	@cp -n .env.example .env 2>/dev/null || true
 	docker compose up -d --build
 	@echo ""
-	@echo "✅ TradingOS is running:"
-	@echo "   Dashboard:    http://localhost:3000"
-	@echo "   API Gateway:  http://localhost:8080"
-	@echo "   MCP Server:   http://localhost:4000/mcp"
-	@echo "   Signal Bus:   http://localhost:7700"
-	@echo "   Grafana:      http://localhost:3001"
+	@echo "TradingOS is running:"
+	@echo "   Dashboard:       http://localhost:3000"
+	@echo "   API Gateway:     http://localhost:8080"
+	@echo "   MCP Server:      http://localhost:4000/mcp"
+	@echo "   Agent Hub:       http://localhost:7704"
+	@echo "   Signal Bus:      http://localhost:7700"
+	@echo "   Grafana:         http://localhost:3001"
 	@echo ""
-	@echo "Connect your AI agent to MCP: http://localhost:4000/mcp"
+	@echo "Framework connections:"
+	@echo "   MCP (Claude/any):   http://localhost:4000/mcp"
+	@echo "   OpenAI functions:   http://localhost:4000/openai-tools"
+	@echo "   LangChain:          http://localhost:4000/langchain-tools"
+	@echo "   OpenAPI spec:       http://localhost:4000/openapi.json"
+	@echo "   Agent REST API:     http://localhost:7704"
 
 down:
 	docker compose down
@@ -104,7 +110,28 @@ status:
 	@curl -s http://localhost:8080/health | jq . || echo "API Gateway: DOWN"
 	@curl -s http://localhost:7700/health | jq . || echo "Signal Bus: DOWN"
 	@curl -s http://localhost:7703/health | jq . || echo "Intelligence: DOWN"
+	@curl -s http://localhost:7704/health | jq . || echo "Agent Hub: DOWN"
 	@curl -s http://localhost:4000/health | jq . || echo "MCP Server: DOWN"
+
+# ─── AGENT HUB ───────────────────────────────────────────────
+
+hub-status:
+	@curl -s http://localhost:7704/health | jq .
+
+hub-agents:
+	@curl -s http://localhost:7704/agents | jq '.[] | {id: .id[:8], name: .name, framework: .framework, skills: .skills}'
+
+# Register a new agent (usage: make hub-register NAME=my-agent FRAMEWORK=langchain)
+hub-register:
+ifndef NAME
+	$(error "Usage: make hub-register NAME=my-agent FRAMEWORK=langchain")
+endif
+	@curl -s -X POST http://localhost:7704/agents/register \
+		-H "Content-Type: application/json" \
+		-d '{"name":"$(NAME)","framework":"$(FRAMEWORK)","description":"Registered via Makefile"}' | jq .
+
+dev-hub:
+	cd packages/agent-hub && python app.py
 
 # ─── TEST ────────────────────────────────────────────────────
 

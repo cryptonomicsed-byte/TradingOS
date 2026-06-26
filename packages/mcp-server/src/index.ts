@@ -2,11 +2,20 @@
 /**
  * TradingOS MCP Server
  *
- * Exposes the full TradingOS trading intelligence platform as MCP tools.
- * Any AI agent (Claude, GPT, Gemini, etc.) can consume signals, interact
- * with the parliament, query memory, and manage positions via these tools.
+ * The universal AI-native interface to TradingOS.
+ * Any agent framework (Claude, GPT, Gemini, LangChain, AutoGen, CrewAI,
+ * Hermes, OpenClaw, custom) can consume the full platform via these tools.
  *
- * This is the primary AI-native interface to TradingOS.
+ * Transport modes:
+ *   stdio — for Claude Desktop / local agents
+ *   http  — for web agents, LangChain, AutoGen, etc.
+ *
+ * Extra endpoints (HTTP mode only):
+ *   GET /tools               — all tools (MCP format)
+ *   GET /openai-tools        — tools in OpenAI function calling format
+ *   GET /langchain-tools     — tools in LangChain format
+ *   GET /openapi.json        — OpenAPI 3.0 spec
+ *   GET /health              — health check
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -18,82 +27,91 @@ import {
   ListResourcesRequestSchema,
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { createServer } from "http";
-import { z } from "zod";
+import { createServer, IncomingMessage, ServerResponse } from "http";
 
 import { signalTools, handleSignalTool } from "./tools/signals.js";
 import { agentTools, handleAgentTool } from "./tools/agents.js";
 import { marketTools, handleMarketTool } from "./tools/market.js";
 import { portfolioTools, handlePortfolioTool } from "./tools/portfolio.js";
 import { parliamentTools, handleParliamentTool } from "./tools/parliament.js";
+import { registryTools, handleRegistryTool } from "./tools/registry.js";
+import { memoryTools, handleMemoryTool } from "./tools/memory.js";
+import { a2aTools, handleA2ATool } from "./tools/a2a.js";
 
-const API_URL = process.env.API_GATEWAY_URL || "http://api-gateway:8080";
+const API_URL  = process.env.API_GATEWAY_URL  || "http://api-gateway:8080";
+const HUB_URL  = process.env.AGENT_HUB_URL    || "http://agent-hub:7704";
 
 // ═══════════════════════════════════════════════════════════════
-// SERVER SETUP
+// ALL TOOLS — merged from every module
 // ═══════════════════════════════════════════════════════════════
 
-const server = new Server(
-  {
-    name: "tradingos",
-    version: "0.1.0",
-  },
-  {
-    capabilities: {
-      tools: {},
-      resources: {},
-    },
-  }
-);
-
-// Merge all tool definitions
 const ALL_TOOLS = [
   ...signalTools,
   ...agentTools,
   ...marketTools,
   ...portfolioTools,
   ...parliamentTools,
+  ...registryTools,
+  ...memoryTools,
+  ...a2aTools,
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// TOOL LISTING
+// MCP SERVER
 // ═══════════════════════════════════════════════════════════════
 
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: ALL_TOOLS,
-}));
+const server = new Server(
+  { name: "tradingos", version: "1.0.0" },
+  { capabilities: { tools: {}, resources: {} } }
+);
 
-// ═══════════════════════════════════════════════════════════════
-// TOOL EXECUTION — Route to appropriate handler
-// ═══════════════════════════════════════════════════════════════
+server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: ALL_TOOLS }));
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
+  const a = args ?? {};
 
   try {
-    // Route to signal tools
+    // Signal tools
     if (name.startsWith("signal_") || name === "get_live_signals" || name === "submit_signal") {
-      return await handleSignalTool(name, args ?? {}, API_URL);
+      return await handleSignalTool(name, a, API_URL);
     }
-
-    // Route to agent tools
+    // Agent tools (internal agents)
     if (name.startsWith("agent_") || name.startsWith("spawner_") || name.startsWith("challenger_")) {
-      return await handleAgentTool(name, args ?? {}, API_URL);
+      return await handleAgentTool(name, a, API_URL);
     }
-
-    // Route to market tools
+    // Market tools
     if (name.startsWith("market_") || name.startsWith("token_") || name.startsWith("whale_")) {
-      return await handleMarketTool(name, args ?? {}, API_URL);
+      return await handleMarketTool(name, a, API_URL);
     }
-
-    // Route to portfolio tools
+    // Portfolio tools
     if (name.startsWith("portfolio_") || name.startsWith("position_") || name.startsWith("pnl_")) {
-      return await handlePortfolioTool(name, args ?? {}, API_URL);
+      return await handlePortfolioTool(name, a, API_URL);
     }
-
-    // Route to parliament tools
-    if (name.startsWith("parliament_") || name.startsWith("memory_")) {
-      return await handleParliamentTool(name, args ?? {}, API_URL);
+    // Parliament tools
+    if (name.startsWith("parliament_") || name.startsWith("memory_court_")) {
+      return await handleParliamentTool(name, a, API_URL);
+    }
+    // Agent registry (external agents)
+    if (name.startsWith("registry_")) {
+      return await handleRegistryTool(name, a, API_URL);
+    }
+    // Memory system
+    if (
+      name.startsWith("memory_working_") ||
+      name.startsWith("memory_remember") ||
+      name.startsWith("memory_recall") ||
+      name.startsWith("memory_list") ||
+      name.startsWith("memory_record_") ||
+      name.startsWith("memory_get_") ||
+      name.startsWith("memory_store_") ||
+      name.startsWith("memory_shared_")
+    ) {
+      return await handleMemoryTool(name, a, API_URL);
+    }
+    // A2A messaging + sessions
+    if (name.startsWith("a2a_") || name.startsWith("session_")) {
+      return await handleA2ATool(name, a, API_URL);
     }
 
     return {
@@ -110,7 +128,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// RESOURCES — Live data the agent can read
+// MCP RESOURCES
 // ═══════════════════════════════════════════════════════════════
 
 server.setRequestHandler(ListResourcesRequestSchema, async () => ({
@@ -142,7 +160,13 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
     {
       uri: "tradingos://market/context",
       name: "Market Context",
-      description: "Current macro market conditions (BTC dominance, fear/greed, gas)",
+      description: "Current macro market conditions",
+      mimeType: "application/json",
+    },
+    {
+      uri: "tradingos://hub/agents",
+      name: "Registered Agents",
+      description: "All externally registered agents across all frameworks",
       mimeType: "application/json",
     },
   ],
@@ -150,10 +174,8 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
 
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
-
   try {
-    const axios = (await import("axios")).default;
-
+    const { default: axios } = await import("axios");
     switch (uri) {
       case "tradingos://signals/live": {
         const res = await axios.get(`${API_URL}/signals?min_conviction=0.5&limit=20`);
@@ -171,6 +193,10 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         const res = await axios.get(`${API_URL}/market/context`);
         return { contents: [{ uri, mimeType: "application/json", text: JSON.stringify(res.data, null, 2) }] };
       }
+      case "tradingos://hub/agents": {
+        const res = await axios.get(`${HUB_URL}/agents`);
+        return { contents: [{ uri, mimeType: "application/json", text: JSON.stringify(res.data, null, 2) }] };
+      }
       default:
         return { contents: [{ uri, mimeType: "text/plain", text: "Resource not found" }] };
     }
@@ -180,42 +206,158 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// START — HTTP (for web agents) or stdio (for Claude Desktop)
+// FRAMEWORK ADAPTER HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+function toOpenAIFormat(tools: typeof ALL_TOOLS) {
+  return tools.map((t) => ({
+    type: "function",
+    function: {
+      name: t.name,
+      description: t.description,
+      parameters: (t as any).inputSchema ?? {},
+    },
+  }));
+}
+
+function toLangChainFormat(tools: typeof ALL_TOOLS) {
+  return tools.map((t) => ({
+    name: t.name,
+    description: t.description,
+    args_schema: (t as any).inputSchema ?? {},
+    metadata: {
+      source: "tradingos-mcp",
+      endpoint: `http://localhost:${PORT}/mcp`,
+    },
+  }));
+}
+
+function toOpenAPISpec(tools: typeof ALL_TOOLS) {
+  const paths: Record<string, any> = {};
+  for (const tool of tools) {
+    paths[`/tools/${tool.name}`] = {
+      post: {
+        operationId: tool.name,
+        summary: tool.description,
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": { schema: (tool as any).inputSchema ?? {} },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Tool result",
+            content: { "application/json": { schema: { type: "object" } } },
+          },
+        },
+      },
+    };
+  }
+  return {
+    openapi: "3.0.3",
+    info: {
+      title: "TradingOS MCP API",
+      version: "1.0.0",
+      description: "Agent-native trading intelligence platform. All tools accessible via HTTP POST.",
+    },
+    servers: [{ url: `http://localhost:${PORT}`, description: "Local MCP Server" }],
+    paths,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// START
 // ═══════════════════════════════════════════════════════════════
 
 const PORT = parseInt(process.env.MCP_SERVER_PORT || "4000");
 const MODE = process.env.MCP_MODE || "http";
 
 if (MODE === "stdio") {
-  // Claude Desktop / local agent mode
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("TradingOS MCP Server running in stdio mode");
 } else {
-  // HTTP mode for web-based agents
-  const httpServer = createServer(async (req, res) => {
-    // Health check
-    if (req.url === "/health") {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: "ok", tools: ALL_TOOLS.length }));
+  const httpServer = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+    // CORS headers for browser-based agents
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Agent-Key, Authorization");
+    if (req.method === "OPTIONS") {
+      res.writeHead(204);
+      res.end();
       return;
     }
 
-    // MCP endpoint
-    if (req.url === "/mcp" || req.url?.startsWith("/mcp/")) {
+    const url = req.url ?? "/";
+
+    // ── Health check
+    if (url === "/health") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: "ok", tools: ALL_TOOLS.length, version: "1.0.0" }));
+      return;
+    }
+
+    // ── MCP protocol endpoint
+    if (url === "/mcp" || url.startsWith("/mcp/")) {
       const transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => Math.random().toString(36).slice(2),
       });
-
       await server.connect(transport);
       await transport.handleRequest(req, res);
       return;
     }
 
-    // Tool discovery endpoint (for non-MCP agents)
-    if (req.url === "/tools") {
+    // ── Tool listing (MCP format)
+    if (url === "/tools") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ tools: ALL_TOOLS }));
+      res.end(JSON.stringify({ tools: ALL_TOOLS, count: ALL_TOOLS.length }));
+      return;
+    }
+
+    // ── OpenAI function calling format
+    if (url === "/openai-tools") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ tools: toOpenAIFormat(ALL_TOOLS), count: ALL_TOOLS.length }));
+      return;
+    }
+
+    // ── LangChain format
+    if (url === "/langchain-tools") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({
+        tools: toLangChainFormat(ALL_TOOLS),
+        count: ALL_TOOLS.length,
+        usage: "Load these with TradingOSToolkit(mcp_url='http://mcp-server:4000')",
+      }));
+      return;
+    }
+
+    // ── OpenAPI 3.0 spec
+    if (url === "/openapi.json" || url === "/openapi") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(toOpenAPISpec(ALL_TOOLS), null, 2));
+      return;
+    }
+
+    // ── Tool invocation (REST shortcut — no MCP client needed)
+    if (url.startsWith("/tools/") && req.method === "POST") {
+      const toolName = url.replace("/tools/", "").split("?")[0];
+      let body = "";
+      for await (const chunk of req) body += chunk;
+      try {
+        const args = JSON.parse(body || "{}");
+        const fakeRequest = { params: { name: toolName, arguments: args } };
+        const result = await server.request(
+          { method: "tools/call", params: { name: toolName, arguments: args } },
+          CallToolRequestSchema
+        );
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: String(err) }));
+      }
       return;
     }
 
@@ -224,9 +366,12 @@ if (MODE === "stdio") {
   });
 
   httpServer.listen(PORT, () => {
-    console.log(`TradingOS MCP Server listening on port ${PORT}`);
-    console.log(`  MCP endpoint: http://localhost:${PORT}/mcp`);
-    console.log(`  Health: http://localhost:${PORT}/health`);
-    console.log(`  Tools: http://localhost:${PORT}/tools (${ALL_TOOLS.length} tools)`);
+    console.log(`\nTradingOS MCP Server v1.0.0 — ${ALL_TOOLS.length} tools`);
+    console.log(`  MCP endpoint:      http://localhost:${PORT}/mcp`);
+    console.log(`  Tool listing:      http://localhost:${PORT}/tools`);
+    console.log(`  OpenAI format:     http://localhost:${PORT}/openai-tools`);
+    console.log(`  LangChain format:  http://localhost:${PORT}/langchain-tools`);
+    console.log(`  OpenAPI spec:      http://localhost:${PORT}/openapi.json`);
+    console.log(`  Health:            http://localhost:${PORT}/health`);
   });
 }
