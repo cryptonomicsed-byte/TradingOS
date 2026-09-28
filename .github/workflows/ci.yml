@@ -1,0 +1,96 @@
+name: CI - Polyglot Stack
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  elixir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.17'
+          otp-version: '27'
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: services/elixir/deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+      - name: Install dependencies
+        run: mix deps.get
+        working-directory: services/elixir
+      - name: Check Formatting
+        run: mix format --check-formatted
+        working-directory: services/elixir
+      - name: Run Tests
+        run: mix test
+        working-directory: services/elixir
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+      - name: Check Formatting
+        run: cargo fmt --all -- --check
+        working-directory: services/rust
+      - name: Run Clippy
+        run: cargo clippy -- -D warnings
+        working-directory: services/rust
+      - name: Run Tests
+        run: cargo test
+        working-directory: services/rust
+
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run Tests
+        run: go test ./...
+        working-directory: services/go
+
+  julia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10'
+      - name: Run Tests
+        run: julia --project=services/julia -e 'using Pkg; Pkg.test()'
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest
+        working-directory: services/python
+      - name: Lint with ruff
+        run: ruff check .
+        working-directory: services/python
+      - name: Run Tests
+        run: pytest
+        working-directory: services/python
