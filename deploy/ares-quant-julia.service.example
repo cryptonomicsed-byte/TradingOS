@@ -1,0 +1,41 @@
+# ares-quant-julia -- TradingOSQuant (Julia) backtest engine HTTP service.
+# EXAMPLE ONLY: shipped in the repo, not installed, not enabled, not started.
+# Class: INTEL (read-only analytics; no network fetches, no orders, no state).
+#
+# Default OFF twice over:
+#   * Environment=QUANT_JULIA_ENABLED=0 below -> src/server.jl prints
+#     "QUANT_JULIA_ENABLED off" and exits 0 without binding a port.
+#   * Vantage only calls this service when ITS OWN env has QUANT_JULIA_ENABLED=1
+#     (backend/quant_client.py); otherwise it never touches the network.
+#
+# Install (operator decision, not automated):
+#   cd <repo>/services/quant/julia/TradingOSQuant && julia --project=. -e 'using Pkg; Pkg.instantiate()'
+#   cp deploy/ares-quant-julia.service.example /etc/systemd/system/ares-quant-julia.service
+#   echo QUANT_JULIA_ENABLED=1 > /etc/ares-env/ares-quant-julia.env
+#   systemctl daemon-reload && systemctl enable --now ares-quant-julia
+[Unit]
+Description=Ares Quant Julia (TradingOSQuant backtest engine, INTEL, read-only)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Environment=QUANT_JULIA_ENABLED=0
+Environment=JULIA_HOST=127.0.0.1
+Environment=JULIA_PORT=8083
+# systemd: EnvironmentFile= values override Environment=, so this file can set QUANT_JULIA_ENABLED=1.
+EnvironmentFile=-/etc/ares-env/ares-quant-julia.env
+WorkingDirectory=/opt/ares/TradingOS/services/quant/julia/TradingOSQuant
+ExecStart=/root/.juliaup/bin/julia --project=. src/server.jl
+Nice=10
+Restart=on-failure
+RestartSec=30
+# Flag-off exits 0 -> not a failure -> no restart loop.
+SuccessExitStatus=0
+NoNewPrivileges=true
+PrivateTmp=true
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

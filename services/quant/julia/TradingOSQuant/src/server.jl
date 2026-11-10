@@ -1,77 +1,36 @@
 """
-HTTP server exposing the TradingOSQuant backtest engine.
-Start with: julia --project=. src/server.jl
+ares-quant-julia entry point: HTTP server for the TradingOSQuant backtest engine.
+
+    QUANT_JULIA_ENABLED=1 julia --project=. src/server.jl
+
+Default OFF: unless QUANT_JULIA_ENABLED is 1/true/yes/on this exits 0 without
+binding anything. Bind address from JULIA_HOST (default 127.0.0.1, never
+0.0.0.0 by default) and JULIA_PORT (default 8083).
 """
 
-using HTTP
-using JSON3
-using Logging
+using TradingOSQuant
 
-include("TradingOSQuant.jl")
-using .TradingOSQuant: BacktestParams, run_backtest
+flag_on(v) = lowercase(strip(v)) in ("1", "true", "yes", "on")
 
-function handle_health(::HTTP.Request)
-    HTTP.Response(200, ["Content-Type" => "application/json"],
-        JSON3.write(Dict("status" => "ok", "service" => "julia-quant")))
-end
-
-function handle_backtest(req::HTTP.Request)
-    try
-        body  = JSON3.read(req.body)
-        ticker = get(body, :ticker, "UNKNOWN")
-        p     = get(body, :params, Dict())
-
-        bp = BacktestParams(
-            hma_len          = get(p, :hma_len, 14),
-            mom_req          = get(p, :mom_req, 3),
-            vol_req          = get(p, :vol_req, 1),
-            use_fib          = get(p, :use_fib, false),
-            sl_mult          = Float64(get(p, :sl_mult, 2.0)),
-            tp_mult          = Float64(get(p, :tp_mult, 3.0)),
-            min_adx          = Float64(get(p, :min_adx, 20.0)),
-            commission_pct   = Float64(get(p, :commission_pct, 0.001)),
-            initial_capital  = Float64(get(p, :initial_capital, 10_000.0))
-        )
-
-        open_v   = Vector{Float64}(body[:open])
-        high_v   = Vector{Float64}(body[:high])
-        low_v    = Vector{Float64}(body[:low])
-        close_v  = Vector{Float64}(body[:close])
-        volume_v = Vector{Float64}(body[:volume])
-
-        r = run_backtest(open_v, high_v, low_v, close_v, volume_v, bp)
-
-        resp = Dict(
-            "ticker"                   => ticker,
-            "sharpe_ratio"             => r.sharpe_ratio,
-            "sortino_ratio"            => r.sortino_ratio,
-            "max_drawdown_pct"         => r.max_drawdown_pct,
-            "profit_factor"            => r.profit_factor,
-            "win_rate"                 => r.win_rate,
-            "total_trades"             => r.total_trades,
-            "winning_trades"           => r.winning_trades,
-            "losing_trades"            => r.losing_trades,
-            "net_profit"               => r.net_profit,
-            "net_profit_pct"           => r.net_profit_pct,
-            "calmar_ratio"             => r.calmar_ratio,
-            "avg_trade_duration_bars"  => r.avg_trade_duration_bars
-        )
-
-        HTTP.Response(200, ["Content-Type" => "application/json"], JSON3.write(resp))
-    catch e
-        @error "backtest failed" exception=e
-        HTTP.Response(500, ["Content-Type" => "application/json"],
-            JSON3.write(Dict("error" => string(e))))
+function main()
+    if !flag_on(get(ENV, "QUANT_JULIA_ENABLED", "0"))
+        println("QUANT_JULIA_ENABLED off; ares-quant-julia not starting")
+        return 0
     end
+    host = get(ENV, "JULIA_HOST", "127.0.0.1")
+    port = parse(Int, get(ENV, "JULIA_PORT", "8083"))
+    TradingOSQuant.Server.warmup()   # JIT before binding: /health up == fast /backtest
+    server = TradingOSQuant.Server.start(; host=host, port=port)
+    try
+        wait(server)
+    catch e
+        e isa InterruptException || rethrow()
+    finally
+        close(server)
+    end
+    return 0
 end
 
-const PORT = parse(Int, get(ENV, "JULIA_PORT", "8083"))
-# Vantage P4-14: bind address from JULIA_HOST (default loopback, was 0.0.0.0).
-const HOST = get(ENV, "JULIA_HOST", "127.0.0.1")
-
-router = HTTP.Router()
-HTTP.register!(router, "GET",  "/health",   handle_health)
-HTTP.register!(router, "POST", "/backtest", handle_backtest)
-
-@info "Julia quant server listening" host=HOST port=PORT
-HTTP.serve(router, HOST, PORT)
+if abspath(PROGRAM_FILE) == @__FILE__
+    exit(main())
+end

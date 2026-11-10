@@ -24,6 +24,9 @@ include("strategy/confluence.jl")
 include("risk/metrics.jl")
 include("risk/position_sizing.jl")
 
+# ── HTTP API (ares-quant-julia) ───────────────────────────────────────────────
+include("http_api.jl")
+
 export
     # Moving averages
     calculate_wma, calculate_hma, calculate_hma_macd,
@@ -38,7 +41,7 @@ export
     # Fibonacci
     calculate_fibonacci_levels, golden_pocket_filter,
     # Strategy
-    BacktestParams, BacktestResult, run_backtest,
+    BacktestParams, BacktestResult, Trade, run_backtest, WARMUP_BARS,
     generate_confluence_signals,
     # Risk metrics
     sharpe_ratio, sortino_ratio, max_drawdown, profit_factor,
