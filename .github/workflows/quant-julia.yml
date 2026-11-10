@@ -1,0 +1,36 @@
+name: quant-julia
+
+# Tests the Julia quant service (services/quant/julia/TradingOSQuant).
+# Matrix: the Project.toml compat floor (julia = "1.10") and latest stable 1.x.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'services/quant/julia/**'
+      - '.github/workflows/quant-julia.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'services/quant/julia/**'
+      - '.github/workflows/quant-julia.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: julia ${{ matrix.julia }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        julia: [ '1.10', '1' ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ matrix.julia }}
+      - uses: julia-actions/cache@v2
+      - name: Pkg.instantiate + Pkg.test
+        run: julia --project=services/quant/julia/TradingOSQuant -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
