@@ -205,11 +205,25 @@ TradingOS/
 │   ├── dashboard/         # TypeScript/Next.js — Real-time UI
 │   ├── api-gateway/       # Go — HTTP/WebSocket gateway
 │   └── quant-engine/      # Julia — Backtesting + ML optimization
+├── services/quant/        # Julia — ares-quant-julia backtest HTTP service (TradingOSQuant)
+├── deploy/                # systemd unit examples (not installed)
 ├── agents/                # Agent definitions and configurations
 ├── plugins/               # WASM strategy plugins
 ├── protos/                # Protocol Buffer definitions
 └── config/                # Environment configs
 ```
+
+---
+
+## ares-quant-julia (TradingOSQuant backtest service)
+
+`services/quant/julia/TradingOSQuant` is the Julia HTTP backtest engine that
+Vantage's `backend/quant_client.py` calls: `GET /health`, `POST /backtest` on
+`127.0.0.1:8083`. It is **off by default**: the service exits without binding
+unless `QUANT_JULIA_ENABLED=1`, and Vantage only calls it when Vantage's own
+`QUANT_JULIA_ENABLED` flag is on. Example systemd unit:
+`deploy/ares-quant-julia.service.example` (not installed). Contract, provenance
+and tests: [`services/quant/README.md`](services/quant/README.md).
 
 ---
 
